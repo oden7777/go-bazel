@@ -1,0 +1,3 @@
+build --remote_cache= --google_credentials=
+test  --remote_cache= --google_credentials=
+run   --remote_cache= --google_credentials=

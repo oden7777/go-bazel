@@ -1,0 +1,37 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library", "go_test")
+load("@io_bazel_rules_docker//go:image.bzl", "go_image")
+load("@io_bazel_rules_docker//container:container.bzl", "container_image")
+
+go_library(
+    name = "service_lib",
+    srcs = ["main.go"],
+    importpath = "github.com/example/project/service",
+    visibility = ["//visibility:private"],
+)
+
+go_binary(
+    name = "service",
+    embed = [":service_lib"],
+    visibility = ["//visibility:public"],
+)
+
+go_test(
+    name = "service_test",
+    srcs = ["main_test.go"],
+    embed = [":service_lib"],
+    deps = ["@com_github_stretchr_testify//assert"],
+)
+
+container_image(
+    name = "base_image",
+    base = "@go_image_base//image",
+)
+
+go_image(
+    name = "service_image",
+    base = ":base_image",
+    embed = [":service_lib"],
+    goarch = "amd64",
+    goos = "linux",
+    visibility = ["//visibility:public"],
+)
